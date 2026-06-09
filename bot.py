@@ -328,6 +328,10 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         file_bytes = await file.download_as_bytearray()
         image = Image.open(io.BytesIO(file_bytes))
         response = model.generate_content([ANALYZE_PROMPT, image])
+
+logger.info(f"GEMINI RESPONSE:\n{response.text}")
+
+text = response.text.strip()
         text = response.text.strip()
         if "НЕ_ЕДА" in text:
             await msg.edit_text("🤔 Не вижу еду на фото. Попробуй другое!")
