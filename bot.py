@@ -322,26 +322,28 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return MAIN_MENU
 
     msg = await update.message.reply_text("🔍 Анализирую фото...")
-    try:
-        photo = update.message.photo[-1]
-        file = await context.bot.get_file(photo.file_id)
-        file_bytes = await file.download_as_bytearray()
-        image = Image.open(io.BytesIO(file_bytes))
-        response = model.generate_content([ANALYZE_PROMPT, image])
+try:
+    photo = update.message.photo[-1]
+    file = await context.bot.get_file(photo.file_id)
+    file_bytes = await file.download_as_bytearray()
+    image = Image.open(io.BytesIO(file_bytes))
 
-logger.info(f"GEMINI RESPONSE:\n{response.text}")
+    response = model.generate_content([ANALYZE_PROMPT, image])
 
-text = response.text.strip()
-        text = response.text.strip()
-        if "НЕ_ЕДА" in text:
-            await msg.edit_text("🤔 Не вижу еду на фото. Попробуй другое!")
-            return MAIN_MENU
-        await save_and_reply(update, context, text, user, msg)
-    except Exception as e:
-        logger.error(f"Photo error: {e}")
-        await msg.edit_text("😔 Не удалось проанализировать. Попробуй ещё раз!")
+    logger.info(f"GEMINI RESPONSE:\n{response.text}")
+
+    text = response.text.strip()
+
+    if "НЕ_ЕДА" in text:
+        await msg.edit_text("🤔 Не вижу еду на фото. Попробуй другое!")
+        return MAIN_MENU
+
+    await save_and_reply(update, context, text, user, msg)
+
+except Exception as e:
+    logger.error(f"Photo error: {e}")
+    await msg.edit_text(f"😔 Ошибка:\n{e}")
     return MAIN_MENU
-
 
 async def handle_text_food(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
