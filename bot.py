@@ -20,7 +20,7 @@ GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("gemini-3.5-flash")
 
 SETUP_WEIGHT, SETUP_HEIGHT, SETUP_AGE, SETUP_GENDER, SETUP_ACTIVITY, SETUP_GOAL, MAIN_MENU = range(7)
 
